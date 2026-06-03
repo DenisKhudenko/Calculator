@@ -1,0 +1,145 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/denishudenko/RiderProjects/Calculator/Calculator/Calculator.csproj": {}
+  },
+  "projects": {
+    "/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/Calculator.BL.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/Calculator.BL.csproj",
+        "projectName": "Calculator.BL",
+        "projectPath": "/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/Calculator.BL.csproj",
+        "packagesPath": "/Users/denishudenko/.nuget/packages/",
+        "outputPath": "/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/denishudenko/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.421/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/denishudenko/RiderProjects/Calculator/Calculator/Calculator.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/denishudenko/RiderProjects/Calculator/Calculator/Calculator.csproj",
+        "projectName": "Calculator",
+        "projectPath": "/Users/denishudenko/RiderProjects/Calculator/Calculator/Calculator.csproj",
+        "packagesPath": "/Users/denishudenko/.nuget/packages/",
+        "outputPath": "/Users/denishudenko/RiderProjects/Calculator/Calculator/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/denishudenko/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/Calculator.BL.csproj": {
+                "projectPath": "/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/Calculator.BL.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[7.0.20, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            },
+            "Swashbuckle.AspNetCore.Annotations": {
+              "target": "Package",
+              "version": "[6.4.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.421/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

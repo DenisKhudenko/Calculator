@@ -1,0 +1,11 @@
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/bin/Debug/net8.0/Calculator.BL.deps.json
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/bin/Debug/net8.0/Calculator.BL.dll
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/bin/Debug/net8.0/Calculator.BL.pdb
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/Calculator.BL.GeneratedMSBuildEditorConfig.editorconfig
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/Calculator.BL.AssemblyInfoInputs.cache
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/Calculator.BL.AssemblyInfo.cs
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/Calculator.BL.csproj.CoreCompileInputs.cache
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/Calculator.BL.dll
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/refint/Calculator.BL.dll
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/Calculator.BL.pdb
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/ref/Calculator.BL.dll
