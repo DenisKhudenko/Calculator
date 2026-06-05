@@ -9,3 +9,4 @@
 /Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/refint/Calculator.BL.dll
 /Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/Calculator.BL.pdb
 /Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/ref/Calculator.BL.dll
+/Users/denishudenko/RiderProjects/Calculator/Calculator.BL/obj/Debug/net8.0/Calculator.BL.sourcelink.json
