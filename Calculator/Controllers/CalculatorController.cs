@@ -16,7 +16,7 @@ public class CalculatorController(ILogger<CalculatorController> logger) : Contro
     /// <summary>
     /// Ввод строки для расчета в калькуляторе
     /// </summary>
-    [HttpPost("calculator")]
+    [HttpPost("calculate")]
     public OkObjectResult Calculate([FromBody] CalculatorRequestDTO dto)
     {
         return Ok(dto

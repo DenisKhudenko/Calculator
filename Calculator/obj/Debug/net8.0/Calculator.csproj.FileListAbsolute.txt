@@ -34,3 +34,4 @@
 /Users/denishudenko/RiderProjects/Calculator/Calculator/obj/Debug/net8.0/Calculator.pdb
 /Users/denishudenko/RiderProjects/Calculator/Calculator/obj/Debug/net8.0/Calculator.genruntimeconfig.cache
 /Users/denishudenko/RiderProjects/Calculator/Calculator/obj/Debug/net8.0/ref/Calculator.dll
+/Users/denishudenko/RiderProjects/Calculator/Calculator/obj/Debug/net8.0/Calculator.sourcelink.json
