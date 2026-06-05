@@ -4,7 +4,7 @@ public class CalculatorException : Exception
 {
     public string Code { get; init; }
 
-    public CalculatorException(string message, string code)
+    protected CalculatorException(string message, string code)
     {
         Code = code;
     }
@@ -13,5 +13,8 @@ public class CalculatorException : Exception
 public class NotMatchingPatternException()
     : CalculatorException("Выражение не подходит под шаблон калькулятора", "NotMatchingPattern");
 
-public class NotMatchingBracketsException()
-    : CalculatorException("Скобки в выражении не закрыты", "NotMatchingBrackets");
+public class InvalidOperatorException(char oper)
+    : CalculatorException($"Неизвестный оператор: {oper}", "NotMatchingBrackets")
+{
+    public char Operator { get; init; } = oper;
+}

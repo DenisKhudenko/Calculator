@@ -4,132 +4,121 @@ using Calculator.BL.Interfaces;
 
 namespace Calculator.BL.Services;
 
+// Узел дерева, из него собираем дерево рекурсией
+class Node(string value, Node? left = null, Node? right = null)
+{
+    public readonly string Value = value;
+    public readonly Node? Left = left;
+    public readonly Node? Right = right;
+}
+
 public class CalculatorService() : ICalculatorService
 {
     public string Expression { get; set; }
+    public int Position { get; set; }
+    
+    private List<string> _tokens;
+    private Regex _regex;
     
     public double Calculate()
     {
-        var matches = GetRegexMatches();
+        // Сначала получаем лист токенов
+        _tokens = GetRegexMatches();
 
-        var operators = new List<char>();
-        var output = new List<double>();
+        // Далее парсим рекурсивно все уровни
+        Node tree = ParseFirstLevel();
         
-        for (var index = 0; index < matches.Count; index++)
-        {
-            var match = matches[index];
-            
-            if (double.TryParse(match, out var value))
-            {
-                output.Add(value);
-            }
-            else if (match == "(")
-            {
-                output.Add(CalculateExpressionOnBracketRecursive(matches, ++index));
-            }
-            else if(match == "-" || match == "+")
-            {
-                operators.Add(char.Parse(match));
-            }
-            else if (match == "*" || match == "/" || match == "^")
-            {
-                var newValue = CalculateTwoNearNumber(output[output.Count - 1], value, char.Parse(match));
-                output.Remove(output.Count - 1);
-                output.Remove(output.Count - 2);
-                output.Add(newValue);
-            }
-        }
-        
-        return CalculateExpression(output, operators);
+        // В конце рекурсивно складываем правые и левые части
+        return CalculateTree(tree);
     }
-
+    
+    // Получаем лист с последовательностью чисел и операторов в выражении
     private List<string> GetRegexMatches()
     {
-        var regex = new Regex(@"\d+(?:\.\d+)?|[\+\-\*\/\^\(\)]");
+        // Регулярное выражение для парсинга выражения
+        _regex = new Regex(@"\d+(?:\.\d+)?|[\+\-\*\/\^\(\)]");
         
-        if(!regex.IsMatch(Expression)) throw new NotMatchingPatternException();
+        // Если переданное выражение не подходит под паттерн, возвращаем исключение
+        if(!_regex.IsMatch(Expression)) throw new NotMatchingPatternException();
         
-        var matches = regex.Matches(Expression);
-
-        List<string> list = new List<string>();
-        
-        foreach (Match match in matches) { list.Add(match.Value); } 
-        return list;
+        // Получаем коллекцию вхождений из регулярного выражения, затем приводим к листу линком
+        var matches = _regex.Matches(Expression);
+        return matches.Select(match => match.Value).ToList();
     }
 
-    private double CalculateExpressionOnBracketRecursive(List<string> matches, int index)
+    // 1 уровень дерева (низший приоритет), рассматриваем +-
+    private Node ParseFirstLevel()
     {
-        var operators = new List<char>();
-        var output = new List<double>();
-        
-        while (index < matches.Count)
+        // Идем рекурсивно вниз ко второму уровню
+        Node left = ParseSecondLevel();
+
+        // Далее раскидываем по сторонам плюс и минус
+        while (Position < _tokens.Count 
+               && (_tokens[Position] == "+" || _tokens[Position] == "-"))
         {
-            var match = matches[index];
-            
-            if (double.TryParse(match, out var value))
-            {
-                output.Add(value);
-            } 
-            else if (match == "-" || match == "+")
-            {
-                operators.Add(char.Parse(match));
-            }
-            else if (match == "*" || match == "/" || match == "^")
-            {
-                var newValue = CalculateTwoNearNumber(output[output.Count - 1], value, char.Parse(match));
-                output.Remove(output.Count - 1);
-                output.Remove(output.Count - 2);
-                output.Add(newValue);
-            }
-            else if (match == "(")
-            {
-                output.Add(CalculateExpressionOnBracketRecursive(matches, ++index));
-            } 
-            else if (match == ")")
-            {
-                return CalculateExpressionOnBracketRecursive(matches, index + 1);
-            }
-            
-            index++;
+            string oper = _tokens[Position++];
+            Node right = ParseSecondLevel();
+            left = new Node(oper, left, right);
         }
-        
-        throw new NotMatchingBracketsException();
+
+        return left;
     }
 
-    private double CalculateExpression(List<double> output, List<char> operators)
+    // 2 уровень дерева (средний приоритет), рассматриваем */^
+    private Node ParseSecondLevel()
     {
-        var indexOperator = 0;
-        var result = output[0];
-        for (var index = 1; index < output.Count; index++)
-        {
-            var value = output[index];
-            switch (operators[indexOperator])
-            {
-                case '*': result *= value; break;
-                case '/': result /= value; break;
-                case '+': result += value; break;
-                case '-': result -= value; break;
-                case '^':
-                    for (int i = 1; i < (value - 1); i++) { result *= result; } break;   
-            }
+        // Разбирем числа и скобки
+        Node left = ParseThirdLevel();
 
-            indexOperator++;
+        // Далее разбираем по сторонам умножение, деление, степень
+        while (Position < _tokens.Count 
+               && (_tokens[Position] == "*" 
+                   || _tokens[Position] == "/" 
+                   || _tokens[Position] == "^"))
+        {
+            string oper = _tokens[Position++];
+            Node right = ParseThirdLevel();
+            left = new Node(oper, left, right);
         }
-        
-        return result;
+
+        return left;
     }
 
-    private double CalculateTwoNearNumber(double value1, double value2, char op)
+    // 2 уровень дерева (высший приоритет), рассматриваем скобки и числа
+    private Node ParseThirdLevel()
     {
-        switch (op)
+        string token = _tokens[Position++];
+
+        // Если скобка, то рекурсивно запускаем парсинг с первого уровня
+        if (token == "(")
         {
-            case '*': value1 *= value2; break;
-            case '/': value1 /= value2; break;
-            case '+': value1 += value2; break;
-            case '-': value1 -= value2; break;
-            case '^':
-                for (int i = 1; i < (value2 - 1); i++) { value1 *= value1; } break;   
-        } 
-        return value1;
+            Node node = ParseFirstLevel();
+            
+            Position++; // итерируем, чтобы пропустить закрывающую скобку
+            return node;
+        }
+
+        // Возвращаем число
+        return new Node(token);
+    }
+
+    // Обход дерева — рекурсивно считаем
+    private double CalculateTree(Node node)
+    {
+        // Если у узла не заполнено правая и левая части, то это число
+        if (node.Left == null && node.Right == null) return double.Parse(node.Value);
+
+        double left  = CalculateTree(node.Left); // рекурсивно считаем левую часть
+        double right = CalculateTree(node.Right); // рекурсивно считаем правую часть
+
+        return node.Value switch
+        {
+            "+" => left + right,
+            "-" => left - right,
+            "*" => left * right,
+            "/" => left / right,
+            "^" => Math.Pow(left, right),
+            _ => throw new InvalidOperatorException(char.Parse(node.Value))
+        };
     }
 }
