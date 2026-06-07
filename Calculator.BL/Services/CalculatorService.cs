@@ -18,7 +18,6 @@ public class CalculatorService() : ICalculatorService
     public int Position { get; set; }
     
     private List<string> _tokens;
-    private Regex _regex;
     
     public double Calculate()
     {
@@ -28,7 +27,7 @@ public class CalculatorService() : ICalculatorService
         // Далее парсим рекурсивно все уровни
         Node tree = ParseFirstLevel();
         
-        // В конце рекурсивно складываем правые и левые части
+        // В конце рекурсивно считаем дерево
         return CalculateTree(tree);
     }
     
@@ -36,13 +35,13 @@ public class CalculatorService() : ICalculatorService
     private List<string> GetRegexMatches()
     {
         // Регулярное выражение для парсинга выражения
-        _regex = new Regex(@"\d+(?:\.\d+)?|[\+\-\*\/\^\(\)]");
+        Regex regex = new Regex(@"\d+(?:\.\d+)?|[\+\-\*\/\^\(\)]");
         
         // Если переданное выражение не подходит под паттерн, возвращаем исключение
-        if(!_regex.IsMatch(Expression)) throw new NotMatchingPatternException();
+        if(!regex.IsMatch(Expression)) throw new NotMatchingPatternException();
         
         // Получаем коллекцию вхождений из регулярного выражения, затем приводим к листу линком
-        var matches = _regex.Matches(Expression);
+        var matches = regex.Matches(Expression);
         return matches.Select(match => match.Value).ToList();
     }
 
@@ -102,14 +101,14 @@ public class CalculatorService() : ICalculatorService
         return new Node(token);
     }
 
-    // Обход дерева — рекурсивно считаем
+    // Рекурсивно считаем дерево
     private double CalculateTree(Node node)
     {
-        // Если у узла не заполнено правая и левая части, то это число
+        // Если у узла не заполнены правый и левый узел, то это парсим значение как число
         if (node.Left == null && node.Right == null) return double.Parse(node.Value);
 
-        double left  = CalculateTree(node.Left); // рекурсивно считаем левую часть
-        double right = CalculateTree(node.Right); // рекурсивно считаем правую часть
+        double left  = CalculateTree(node.Left); // рекурсивно считаем левый узел
+        double right = CalculateTree(node.Right); // рекурсивно считаем правый узел
 
         return node.Value switch
         {
