@@ -30,7 +30,8 @@ public class CalculatorServiceTests
             .Throws<DivideByZeroException>();
         
         // Assert
-        Assert.Throws<DivideByZeroException>(() => _mock.Object.Calculate());
+        Assert.Throws<DivideByZeroException>(delegate { _mock.Object.Calculate(); });
+        // Как вариант использовать анонимный метод и сокращенно будет (() => _mock.Object.Calculate()
     }
     
     [Fact(DisplayName = "Метод Calculate вызывается единожды")]
