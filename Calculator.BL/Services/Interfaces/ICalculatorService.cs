@@ -1,9 +1,6 @@
-namespace Calculator.BL.Interfaces;
+namespace Calculator.BL.Services.Interfaces;
 
 public interface ICalculatorService
 {
-    string Expression { get; set; }
-    int Position { get; set; }
-    
-    double Calculate();
+    double Calculate(string expression);
 }

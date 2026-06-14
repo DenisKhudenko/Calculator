@@ -1,6 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using Calculator.BL.Exceptions;
-using Calculator.BL.Interfaces;
+using Calculator.BL.Services.Interfaces;
 
 namespace Calculator.BL.Services;
 
@@ -14,49 +15,49 @@ class Node(string value, Node? left = null, Node? right = null)
 
 public class CalculatorService() : ICalculatorService
 {
-    public string Expression { get; set; }
-    public int Position { get; set; }
-    
-    private List<string> _tokens;
-    
-    public double Calculate()
+    public double Calculate(string expression)
     {
         // Сначала получаем лист токенов
-        _tokens = GetRegexMatches();
+        var tokens = GetRegexMatches(expression);
 
+        // Инициализируем индекс
+        int position = 0;
+            
         // Далее парсим рекурсивно все уровни
-        Node tree = ParseFirstLevel();
+        var tree = ParseFirstLevel(tokens, ref position);
         
         // В конце рекурсивно считаем дерево
         return CalculateTree(tree);
     }
     
     // Получаем лист с последовательностью чисел и операторов в выражении
-    private List<string> GetRegexMatches()
+    private List<string> GetRegexMatches(string expression)
     {
         // Регулярное выражение для парсинга выражения
-        Regex regex = new Regex(@"\d+(?:\.\d+)?|[\+\-\*\/\^\(\)]");
+        var regex = new Regex(@"\d+(?:[.,]\d+)?|[\+\-\*\/\^\(\)]");
         
         // Если переданное выражение не подходит под паттерн, возвращаем исключение
-        if(!regex.IsMatch(Expression)) throw new NotMatchingPatternException();
+        if(!regex.IsMatch(expression)) throw new NotMatchingPatternException();
         
         // Получаем коллекцию вхождений из регулярного выражения, затем приводим к листу линком
-        var matches = regex.Matches(Expression);
+        var matches = regex.Matches(expression);
         return matches.Select(match => match.Value).ToList();
     }
 
     // 1 уровень дерева (низший приоритет), рассматриваем +-
-    private Node ParseFirstLevel()
+    private Node ParseFirstLevel(List<string> tokens, ref int position)
     {
         // Идем рекурсивно вниз ко второму уровню
-        Node left = ParseSecondLevel();
+        var left = ParseSecondLevel(tokens, ref position);
 
         // Далее раскидываем по сторонам плюс и минус
-        while (Position < _tokens.Count 
-               && (_tokens[Position] == "+" || _tokens[Position] == "-"))
+        while (position < tokens.Count 
+               && (tokens[position] == "+" || tokens[position] == "-"))
         {
-            string oper = _tokens[Position++];
-            Node right = ParseSecondLevel();
+            string oper = tokens[position];
+            position++;
+                
+            var right = ParseSecondLevel(tokens, ref position);
             left = new Node(oper, left, right);
         }
 
@@ -64,19 +65,21 @@ public class CalculatorService() : ICalculatorService
     }
 
     // 2 уровень дерева (средний приоритет), рассматриваем */^
-    private Node ParseSecondLevel()
+    private Node ParseSecondLevel(List<string> tokens, ref int position)
     {
         // Разбирем числа и скобки
-        Node left = ParseThirdLevel();
+        var left = ParseThirdLevel(tokens, ref position);
 
         // Далее разбираем по сторонам умножение, деление, степень
-        while (Position < _tokens.Count 
-               && (_tokens[Position] == "*" 
-                   || _tokens[Position] == "/" 
-                   || _tokens[Position] == "^"))
+        while (position < tokens.Count 
+               && (tokens[position] == "*" 
+                   || tokens[position] == "/" 
+                   || tokens[position] == "^"))
         {
-            string oper = _tokens[Position++];
-            Node right = ParseThirdLevel();
+            string oper = tokens[position];
+            position++;
+            
+            var right = ParseThirdLevel(tokens, ref position);
             left = new Node(oper, left, right);
         }
 
@@ -84,16 +87,17 @@ public class CalculatorService() : ICalculatorService
     }
 
     // 2 уровень дерева (высший приоритет), рассматриваем скобки и числа
-    private Node ParseThirdLevel()
+    private Node ParseThirdLevel(List<string> tokens, ref int position)
     {
-        string token = _tokens[Position++];
+        string token = tokens[position];
+        position++;
 
         // Если скобка, то рекурсивно запускаем парсинг с первого уровня
         if (token == "(")
         {
-            Node node = ParseFirstLevel();
+            var node = ParseFirstLevel(tokens, ref position);
             
-            Position++; // итерируем, чтобы пропустить закрывающую скобку
+            position++; // итерируем, чтобы пропустить закрывающую скобку
             return node;
         }
 
@@ -105,10 +109,15 @@ public class CalculatorService() : ICalculatorService
     private double CalculateTree(Node node)
     {
         // Если у узла не заполнены правый и левый узел, то это парсим значение как число
-        if (node.Left == null && node.Right == null) return double.Parse(node.Value);
+        if (node.Left == null 
+            && node.Right == null)
+        {
+            var value = double.Parse(node.Value.Replace(",", "."), CultureInfo.InvariantCulture);
+            return value;
+        }
 
-        double left  = CalculateTree(node.Left); // рекурсивно считаем левый узел
-        double right = CalculateTree(node.Right); // рекурсивно считаем правый узел
+        var left  = CalculateTree(node.Left); // рекурсивно считаем левый узел
+        var right = CalculateTree(node.Right); // рекурсивно считаем правый узел
 
         return node.Value switch
         {
@@ -117,7 +126,7 @@ public class CalculatorService() : ICalculatorService
             "*" => left * right,
             "/" => left / right,
             "^" => Math.Pow(left, right),
-            _ => throw new InvalidOperatorException(char.Parse(node.Value))
+            _ => throw new InvalidOperatorException(node.Value)
         };
     }
 }

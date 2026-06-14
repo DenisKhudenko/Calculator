@@ -1,6 +1,6 @@
 using System.Reflection;
 using Calculator.BL.Services;
-using Calculator.BL.Interfaces;
+using Calculator.BL.Services.Interfaces;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);

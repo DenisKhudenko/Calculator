@@ -13,8 +13,8 @@ public class CalculatorException : Exception
 public class NotMatchingPatternException()
     : CalculatorException("Выражение не подходит под шаблон калькулятора", "NotMatchingPattern");
 
-public class InvalidOperatorException(char oper)
+public class InvalidOperatorException(string oper)
     : CalculatorException($"Неизвестный оператор: {oper}", "NotMatchingBrackets")
 {
-    public char Operator { get; init; } = oper;
+    public string Operator { get; init; } = oper;
 }
