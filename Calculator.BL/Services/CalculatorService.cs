@@ -15,34 +15,32 @@ class Node(string value, Node? left = null, Node? right = null)
 
 public class CalculatorService() : ICalculatorService
 {
-    public string Expression { get; set; }
-    
-    public double Calculate()
+    public double Calculate(string expression)
     {
         // Сначала получаем лист токенов
-        List<string> tokens = GetRegexMatches();
+        var tokens = GetRegexMatches(expression);
 
         // Инициализируем индекс
         int position = 0;
             
         // Далее парсим рекурсивно все уровни
-        Node tree = ParseFirstLevel(tokens, ref position);
+        var tree = ParseFirstLevel(tokens, ref position);
         
         // В конце рекурсивно считаем дерево
         return CalculateTree(tree);
     }
     
     // Получаем лист с последовательностью чисел и операторов в выражении
-    private List<string> GetRegexMatches()
+    private List<string> GetRegexMatches(string expression)
     {
         // Регулярное выражение для парсинга выражения
-        Regex regex = new Regex(@"\d+(?:[.,]\d+)?|[\+\-\*\/\^\(\)]");
+        var regex = new Regex(@"\d+(?:[.,]\d+)?|[\+\-\*\/\^\(\)]");
         
         // Если переданное выражение не подходит под паттерн, возвращаем исключение
-        if(!regex.IsMatch(Expression)) throw new NotMatchingPatternException();
+        if(!regex.IsMatch(expression)) throw new NotMatchingPatternException();
         
         // Получаем коллекцию вхождений из регулярного выражения, затем приводим к листу линком
-        var matches = regex.Matches(Expression);
+        var matches = regex.Matches(expression);
         return matches.Select(match => match.Value).ToList();
     }
 
@@ -50,7 +48,7 @@ public class CalculatorService() : ICalculatorService
     private Node ParseFirstLevel(List<string> tokens, ref int position)
     {
         // Идем рекурсивно вниз ко второму уровню
-        Node left = ParseSecondLevel(tokens, ref position);
+        var left = ParseSecondLevel(tokens, ref position);
 
         // Далее раскидываем по сторонам плюс и минус
         while (position < tokens.Count 
@@ -59,7 +57,7 @@ public class CalculatorService() : ICalculatorService
             string oper = tokens[position];
             position++;
                 
-            Node right = ParseSecondLevel(tokens, ref position);
+            var right = ParseSecondLevel(tokens, ref position);
             left = new Node(oper, left, right);
         }
 
@@ -70,7 +68,7 @@ public class CalculatorService() : ICalculatorService
     private Node ParseSecondLevel(List<string> tokens, ref int position)
     {
         // Разбирем числа и скобки
-        Node left = ParseThirdLevel(tokens, ref position);
+        var left = ParseThirdLevel(tokens, ref position);
 
         // Далее разбираем по сторонам умножение, деление, степень
         while (position < tokens.Count 
@@ -81,7 +79,7 @@ public class CalculatorService() : ICalculatorService
             string oper = tokens[position];
             position++;
             
-            Node right = ParseThirdLevel(tokens, ref position);
+            var right = ParseThirdLevel(tokens, ref position);
             left = new Node(oper, left, right);
         }
 
@@ -97,7 +95,7 @@ public class CalculatorService() : ICalculatorService
         // Если скобка, то рекурсивно запускаем парсинг с первого уровня
         if (token == "(")
         {
-            Node node = ParseFirstLevel(tokens, ref position);
+            var node = ParseFirstLevel(tokens, ref position);
             
             position++; // итерируем, чтобы пропустить закрывающую скобку
             return node;
@@ -112,10 +110,14 @@ public class CalculatorService() : ICalculatorService
     {
         // Если у узла не заполнены правый и левый узел, то это парсим значение как число
         if (node.Left == null 
-            && node.Right == null) return double.Parse(node.Value.Replace(",", "."), CultureInfo.InvariantCulture);
+            && node.Right == null)
+        {
+            var value = double.Parse(node.Value.Replace(",", "."), CultureInfo.InvariantCulture);
+            return value;
+        }
 
-        double left  = CalculateTree(node.Left); // рекурсивно считаем левый узел
-        double right = CalculateTree(node.Right); // рекурсивно считаем правый узел
+        var left  = CalculateTree(node.Left); // рекурсивно считаем левый узел
+        var right = CalculateTree(node.Right); // рекурсивно считаем правый узел
 
         return node.Value switch
         {

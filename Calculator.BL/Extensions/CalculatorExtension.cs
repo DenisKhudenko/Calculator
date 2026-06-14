@@ -8,7 +8,7 @@ public static class CalculatorExtension
 {
     public static ICalculatorService MapCalculatorFromRequestDto(this CalculatorRequestDTO dto)
     {
-        return new CalculatorService() { Expression = dto.Expression};
+        return new CalculatorService() {};
     }  
     
     public static CalculatorResponseDTO MapResultCalculatorToResponseDto(this double result)

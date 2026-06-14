@@ -19,9 +19,10 @@ public class CalculatorController(ILogger<CalculatorController> logger) : Contro
     [HttpPost("calculate")]
     public OkObjectResult Calculate([FromBody] CalculatorRequestDTO dto)
     {
+        string expression = dto.Expression;
         return Ok(dto
             .MapCalculatorFromRequestDto()
-            .Calculate()
+            .Calculate(expression)
             .MapResultCalculatorToResponseDto());
     }
 }
